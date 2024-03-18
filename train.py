@@ -42,12 +42,6 @@ path2img_test = 'dataset_1to2/test'
 test_ds = test(path2img_test, transform=transform)
 test_dl = DataLoader(test_ds, batch_size=1, shuffle=False)
 
-'''
-dataset의 이미지 파일을 배치 단위로 나눠줌 현재는 batch_size가 1이므로, 
-한 쌍의 이미지에 대응하는 (b, a) 배치 세트가 1794개 생성됨.
-즉 test_dl은 (b,a) 세트 1794개를 가지고 있음. 
-'''
-
 # Generator and Discriminator initialization
 model_gen = Generator().to(device)
 model_dis = Dcnator().to(device)
@@ -136,13 +130,7 @@ with Progress() as p:
                 task1 = p.add_task("[cyan]Training...", total=1000)  # Add a new progress bar
             else:
                 p.update(task1, advance=1)  # Advance the progress bar
-            #if batch_count % len(train_dl) == 0:
-            #    print('Epoch: %d, G_Loss: %.6f, D_Loss: %.6f, time: %.2f min' % (epoch, g_loss.item(), d_loss.item(), (time.time() - start_time) / 60))
-
-'''
-1 에포크 마다 for real_a, real_b in train_dl:에서 1794개의 배치(b,a)가 연산된 뒤, 다음 에포크로 넘어감
-즉, batch_count는 1 epoch 시작시 0, 2 epoch 시작시 1794, 3 epoch 시작시 1794*2,.......,100 epoch 시작시 179400이다. 
-'''
+            
 
 # Loss history plot
 plt.figure(figsize=(10, 5))
@@ -165,4 +153,3 @@ torch.save(model_dis.state_dict(), path2weights_dis)
 # Loading weights
 weights = torch.load(path2weights_gen)
 model_gen.load_state_dict(weights)
-
